@@ -37,7 +37,7 @@ jobs:
           region: '${{ env.REGION }}'
           source: './'
           allow_unauthenticated: true
-          image: 'us-west2-docker.pkg.dev/chkp-gcp-prd-kenobi-box/cloud-run-source-deploy/thunderservice'
+          #image: 'us-west2-docker.pkg.dev/chkp-gcp-prd-kenobi-box/cloud-run-source-deploy/thunderservice'
 
       - name: 'Show output'
         run: |-
