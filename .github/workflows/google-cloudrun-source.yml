@@ -39,9 +39,6 @@ jobs:
           allow_unauthenticated: true
           image: 'us-west2-docker.pkg.dev/chkp-gcp-prd-kenobi-box/cloud-run-source-deploy/thunderservice'
 
-    - name: 'Use output'
-      run: 'curl "${{ steps.deploy.outputs.url }}"
-
       - name: 'Show output'
         run: |-
           echo "Service URL: ${{ steps.deploy.outputs.url }}"
