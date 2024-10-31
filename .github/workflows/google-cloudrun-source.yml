@@ -36,6 +36,7 @@ jobs:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
           source: './'
+          allow_unauthenticated: true
 
       - name: 'Show output'
         run: |-
