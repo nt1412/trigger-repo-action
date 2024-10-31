@@ -27,7 +27,7 @@ jobs:
         uses: 'google-github-actions/auth@v2'
         with:
           workload_identity_provider: 'projects/950783879036/locations/global/workloadIdentityPools/github/providers/for-cloud-run'
-          service_account: 'my-service-account@chkp-gcp-prd-kenobi-box.iam.gserviceaccount.com'
+          service_account: '950783879036-compute@chkp-gcp-prd-kenobi-box.iam.gserviceaccount.com'
 
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
