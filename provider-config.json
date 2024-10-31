@@ -1,0 +1,15 @@
+{
+  "attributeCondition": "true",
+  "attributeMapping": {
+    "attribute.actor": "assertion.actor",
+    "attribute.repository": "assertion.repository",
+    "attribute.repository_owner": "assertion.repository_owner",
+    "google.subject": "assertion.sub"
+  },
+  "displayName": "My GitHub repo Provider",
+  "name": "projects/950783879036/locations/global/workloadIdentityPools/github/providers/my-repo",
+  "oidc": {
+    "issuerUri": "https://token.actions.githubusercontent.com"
+  },
+  "state": "ACTIVE"
+}
