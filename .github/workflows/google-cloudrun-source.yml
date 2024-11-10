@@ -30,11 +30,18 @@ jobs:
           workload_identity_provider: 'projects/950783879036/locations/global/workloadIdentityPools/github/providers/for-cloud-run'
           service_account: 'my-service-account@chkp-gcp-prd-kenobi-box.iam.gserviceaccount.com'
 
-      - name: 'Check for .env file'
+      - name: 'Check for .env file and export variables'
         id: check_env
         run: |
           if [ -f .env ]; then
             echo "env_file_present=true" >> $GITHUB_ENV
+            # Read .env file and export variables
+            while IFS= read -r line; do
+              if [[ ! "$line" =~ ^# && "$line" =~ = ]]; then
+                echo "Parsed env var: $line"
+                echo "$line" >> $GITHUB_ENV
+              fi
+            done < .env
           else
             echo "env_file_present=false" >> $GITHUB_ENV
           fi
@@ -48,7 +55,6 @@ jobs:
           source: './'
           flags: >
             --allow-unauthenticated --platform managed
-            ${{ env.env_file_present == 'true' && '--env-vars-file=.env' || '' }}
 
       - name: 'Annotate Service URL'
         run: |
