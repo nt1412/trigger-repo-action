@@ -1,14 +1,15 @@
 name: 'Deploy to Cloud Run from Source'
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'main'
 
 env:
   PROJECT_ID: 'chkp-gcp-prd-kenobi-box'
-  REGION: 'us-west2'
-  SERVICE: 'thunderservice'
+  REGION: 'us-central1'
+  SERVICE: ${{ github.event.repository.name }}
 
 jobs:
   deploy:
@@ -29,6 +30,15 @@ jobs:
           workload_identity_provider: 'projects/950783879036/locations/global/workloadIdentityPools/github/providers/for-cloud-run'
           service_account: 'my-service-account@chkp-gcp-prd-kenobi-box.iam.gserviceaccount.com'
 
+      - name: 'Check for .env file'
+        id: check_env
+        run: |
+          if [ -f .env ]; then
+            echo "env_file_present=true" >> $GITHUB_ENV
+          else
+            echo "env_file_present=false" >> $GITHUB_ENV
+          fi
+
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
@@ -36,9 +46,11 @@ jobs:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
           source: './'
-          flags: '--allow-unauthenticated'
-          #image: 'us-west2-docker.pkg.dev/chkp-gcp-prd-kenobi-box/cloud-run-source-deploy/thunderservice'
+          flags: >
+            --allow-unauthenticated --platform managed
+            ${{ steps.check_env.outputs.env_file_present == 'true' && '--set-env-vars-file=.env' || '' }}
 
-      - name: 'Show output'
-        run: |-
-          echo "Service URL: ${{ steps.deploy.outputs.url }}"
+      - name: 'Annotate Service URL'
+        run: |
+          SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE }} --platform managed --region ${{ env.REGION }} --format='value(status.url)')
+          echo "::notice title=Cloud Run Deployment URL::${SERVICE_URL}"
