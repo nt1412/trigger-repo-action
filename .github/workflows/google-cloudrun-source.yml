@@ -38,8 +38,9 @@ jobs:
             # Read .env file and export variables
             while IFS= read -r line; do
               if [[ ! "$line" =~ ^# && "$line" =~ = ]]; then
-                echo "Parsed env var: $line"
-                echo "$line" >> $GITHUB_ENV
+                key=$(echo "$line" | cut -d '=' -f 1)
+                value=$(echo "$line" | cut -d '=' -f 2-)
+                echo "$key=$value" >> $GITHUB_ENV
               fi
             done < .env
           else
