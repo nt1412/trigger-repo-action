@@ -48,7 +48,7 @@ jobs:
           source: './'
           flags: >
             --allow-unauthenticated --platform managed
-            ${{ env.env_file_present == 'true' && '--set-env-vars-file=.env' || '' }}
+            ${{ env.env_file_present == 'true' && '--env-vars-file=.env' || '' }}
 
       - name: 'Annotate Service URL'
         run: |
