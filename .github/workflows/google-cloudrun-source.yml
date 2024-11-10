@@ -6,9 +6,9 @@ on:
       - 'main'
 
 env:
-  PROJECT_ID: 'chkp-gcp-prd-kenobi-box'  # Updated project ID
-  REGION: 'us-west2'                     # Updated region
-  SERVICE: 'thunderservice'              # Updated service name
+  PROJECT_ID: 'chkp-gcp-prd-kenobi-box'
+  REGION: 'us-west2'
+  SERVICE: 'thunderservice'
 
 jobs:
   deploy:
@@ -22,15 +22,13 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
 
-      # Authenticate with Google Cloud using Workload Identity Federation
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v2'
         with:
-          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'  # Replace with your pool/provider details
-          service_account: 'my-service-account@chkp-gcp-prd-kenobi-box.iam.gserviceaccount.com'  # Replace with your service account
+          workload_identity_provider: 'projects/950783879036/locations/global/workloadIdentityPools/github/providers/for-cloud-run'
+          service_account: 'my-service-account@chkp-gcp-prd-kenobi-box.iam.gserviceaccount.com'
 
-      # Deploy to Cloud Run
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
@@ -38,8 +36,9 @@ jobs:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
           source: './'
+          flags: '--allow-unauthenticated'
+          #image: 'us-west2-docker.pkg.dev/chkp-gcp-prd-kenobi-box/cloud-run-source-deploy/thunderservice'
 
-      # Output the Cloud Run service URL
       - name: 'Show output'
         run: |-
           echo "Service URL: ${{ steps.deploy.outputs.url }}"
