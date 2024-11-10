@@ -9,7 +9,7 @@ on:
 env:
   PROJECT_ID: 'chkp-gcp-prd-kenobi-box'
   REGION: 'us-central1'
-  SERVICE: ${{ github.event.repository.name }}
+  SERVICE: ${{ github.event.repository.name }} 
 
 jobs:
   deploy:
@@ -48,7 +48,7 @@ jobs:
           source: './'
           flags: >
             --allow-unauthenticated --platform managed
-            ${{ steps.check_env.outputs.env_file_present == 'true' && '--set-env-vars-file=.env' || '' }}
+            ${{ env.env_file_present == 'true' && '--set-env-vars-file=.env' || '' }}
 
       - name: 'Annotate Service URL'
         run: |
