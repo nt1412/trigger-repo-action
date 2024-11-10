@@ -1,0 +1,56 @@
+name: 'Deploy to Cloud Run from Source'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+env:
+  PROJECT_ID: 'chkp-gcp-prd-kenobi-box'
+  REGION: 'us-central1'
+  SERVICE: ${{ github.event.repository.name }}
+
+jobs:
+  deploy:
+    runs-on: 'ubuntu-latest'
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v4'
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: 'projects/950783879036/locations/global/workloadIdentityPools/github/providers/for-cloud-run'
+          service_account: 'my-service-account@chkp-gcp-prd-kenobi-box.iam.gserviceaccount.com'
+
+      - name: 'Check for .env file'
+        id: check_env
+        run: |
+          if [ -f .env ]; then
+            echo "env_file_present=true" >> $GITHUB_ENV
+          else
+            echo "env_file_present=false" >> $GITHUB_ENV
+          fi
+
+      - name: 'Deploy to Cloud Run'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          project_id: '${{ env.PROJECT_ID }}'
+          service: '${{ env.SERVICE }}'
+          region: '${{ env.REGION }}'
+          source: './'
+          flags: >
+            --allow-unauthenticated --platform managed
+            ${{ steps.check_env.outputs.env_file_present == 'true' && '--set-env-vars-file=.env' || '' }}
+
+      - name: 'Annotate Service URL'
+        run: |
+          SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE }} --platform managed --region ${{ env.REGION }} --format='value(status.url)')
+          echo "::notice title=Cloud Run Deployment URL::${SERVICE_URL}"
