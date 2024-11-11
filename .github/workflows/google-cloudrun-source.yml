@@ -38,15 +38,13 @@ jobs:
             # Read .env file and export variables
             while IFS= read -r line; do
               if [[ ! "$line" =~ ^# && "$line" =~ = ]]; then
-                key=$(echo "$line" | cut -d '=' -f 1)
-                value=$(echo "$line" | cut -d '=' -f 2-)
-                echo "$key=$value" >> $GITHUB_ENV
+                echo "Parsed env var: $line"
+                echo "$line" >> $GITHUB_ENV
               fi
             done < .env
           else
             echo "env_file_present=false" >> $GITHUB_ENV
           fi
-
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
@@ -56,8 +54,7 @@ jobs:
           source: './'
           flags: >
             --allow-unauthenticated --platform managed
-
       - name: 'Annotate Service URL'
         run: |
           SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE }} --platform managed --region ${{ env.REGION }} --format='value(status.url)')
-          echo "::notice title=Cloud Run Deployment URL::${SERVICE_URL}"
+          echo "::notice title=Cloud Run Deployment URL::${SERVICE_URL}
