@@ -55,7 +55,7 @@ jobs:
           project_id: '${{ env.PROJECT_ID }}'
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
-          env_vars_update_strategy: 'replace'
+          #env_vars_update_strategy: 'replace'
           source: './'
           flags: '--allow-unauthenticated --platform managed ${{ env.ENV_VARS }}'
 
