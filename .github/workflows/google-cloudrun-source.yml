@@ -57,7 +57,7 @@ jobs:
           region: '${{ env.REGION }}'
           source: './'
           flags: '--allow-unauthenticated --platform managed ${{ env.ENV_VARS }}'
-          env_vars_update_strategy: 'replace'
+          env_vars_update_strategy: 'overwrite'
 
       - name: 'Annotate Service URL'
         run: |
