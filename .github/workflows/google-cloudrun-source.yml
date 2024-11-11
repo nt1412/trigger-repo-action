@@ -39,7 +39,7 @@ jobs:
             while IFS= read -r line; do
               if [[ ! "$line" =~ ^# && "$line" =~ = ]]; then
                 echo "Parsed env var: $line"
-                echo "$line" >> $GITHUB_ENV
+                echo "$line" >> $GITHUB_ENV"
               fi
             done < .env
           else
