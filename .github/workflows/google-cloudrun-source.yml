@@ -35,15 +35,17 @@ jobs:
         run: |
           if [ -f .env ]; then
             echo "env_file_present=true" >> $GITHUB_ENV
-            # Read .env file and export variables
-            while IFS= read -r line; do
-              if [[ ! "$line" =~ ^# && "$line" =~ = ]]; then
-                echo "Parsed env var: $line"
-                echo "$line" >> $GITHUB_ENV
-              fi
-            done < .env
-          else
-            echo "env_file_present=false" >> $GITHUB_ENV
+              # Read .env file and export variables
+              while IFS= read -r line; do
+                if [[ ! "$line" =~ ^# && "$line" =~ = ]]; then
+                  echo "Parsed env var: $line"
+                  echo "$line" >> $GITHUB_ENV
+                fi
+              done < .env
+            else
+              echo "env_file_present=false" >> $GITHUB_ENV
+            fi
+
 
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
